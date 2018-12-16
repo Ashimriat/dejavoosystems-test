@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import Typography from '@material-ui/core/Typography';
 import Grid from "@material-ui/core/Grid/Grid";
 import classnames from 'classnames';
+import compact from 'lodash/compact';
 
 import Chart from './Chart';
 import { SummaryData, AppData, TransactionsTableData, ChartData} from '../interfaces';
@@ -81,17 +82,17 @@ class SummaryInfo extends React.PureComponent<Props, State> {
     let rows = [...data.rows];
     let extData = rows.map(row => row.extData),
       hostData = rows.map(row => row.hostData),
-      oldData = rows.map(row => row.hostData),
+      oldData = rows.map(row => row.oldData),
       fields = rows.map(row => row.fields),
       heads = [...data.fieldsInfo];
 
     let newRows = heads.map(head => {
       return {
         titleCell: head,
-        extData: extData.map(field => field.find(fieldInfo => fieldInfo.id === head.id)),
-        hostData: hostData.map(field => field.find(fieldInfo => fieldInfo.id === head.id)),
-        oldData: oldData.map(field => field.find(fieldInfo => fieldInfo.id === head.id)),
-        fields: fields.map(field => field.find(fieldInfo => fieldInfo.id === head.id))
+        extData: compact(extData.map(field => field.find(fieldInfo => fieldInfo.id === head.id))),
+        hostData: compact(hostData.map(field => field.find(fieldInfo => fieldInfo.id === head.id))),
+        oldData: compact(oldData.map(field => field.find(fieldInfo => fieldInfo.id === head.id))),
+        fields: compact(fields.map(field => field.find(fieldInfo => fieldInfo.id === head.id)))
       }
     });
     let dateRow = newRows.find(row => row.titleCell.key === 'Date'),
@@ -162,18 +163,38 @@ class SummaryInfo extends React.PureComponent<Props, State> {
       .find(position => position.titleCell.key === 'Date').fields
       .map(field => field.value);
 
+    let oldValues = [];
+
+    this.mainTableData.forEach(row => {
+      if (row.titleCell.key === 'TotalAmount' && row.oldData.length) {
+        row.oldData.forEach(data => {
+          if (data.id === this.appsTableData[0].amounts.id) oldValues.push(data.value)
+        })
+      }
+    })
+
     let chartInfo = {
       labels,
-      datasets: this.appsTableData.map(app => {
-        return {
-          label: app.name,
-          data: [...app.amounts.values],
-          backgroundColor: app.color,
-          hoverBackgroundColor: app.color
+      datasets: [
+        ...this.appsTableData.map(app => {
+          return {
+            type: 'bar',
+            label: app.name,
+            data: [...app.amounts.values],
+            backgroundColor: app.color,
+            hoverBackgroundColor: app.color
+          }
+        }),
+        {
+          type: 'line',
+          label: 'Old Data',
+          data: [...oldValues],
+          borderColor: '#BBBBBB',
+          borderWidth: 2,
+          fill: false
         }
-      })
+      ]
     }
-
 
     // @ts-ignore
     return chartInfo;
@@ -267,38 +288,46 @@ class SummaryInfo extends React.PureComponent<Props, State> {
         justify={'center'}
         alignItems={'center'}
         spacing={16}
+        direction={'column'}
       >
         <Grid item>
-          <Typography className={classes.title}>
+          <Typography className={classes.value}>
             {'Transactions summary'}
           </Typography>
         </Grid>
-        {
-          totalsInfo.map((infoPoint, index) => {
-            return (
-              <Grid
-                key={`totals-${index}`}
-                item
-                container
-                direction={'column'}
-                justify={'center'}
-                alignItems={'center'}
-                xs={3}
-              >
-                <Grid item>
-                  <Typography className={classes.value}>
-                    {infoPoint.value}
-                  </Typography>
+        <Grid
+          item
+          container
+          justify={'center'}
+          alignItems={'center'}
+        >
+          {
+            totalsInfo.map((infoPoint, index) => {
+              return (
+                <Grid
+                  key={`totals-${index}`}
+                  item
+                  container
+                  direction={'column'}
+                  justify={'center'}
+                  alignItems={'center'}
+                  xs={3}
+                >
+                  <Grid item>
+                    <Typography className={classes.value}>
+                      {infoPoint.value}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography className={classes.title}>
+                      {infoPoint.name}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Typography className={classes.title}>
-                    {infoPoint.name}
-                  </Typography>
-                </Grid>
-              </Grid>
-            )
-          })
-        }
+              )
+            })
+          }
+        </Grid>
       </Grid>
     )
   }
@@ -332,7 +361,13 @@ class SummaryInfo extends React.PureComponent<Props, State> {
                   <React.Fragment key={`position-${positionIndex}`}>
                     <TableRow>
                       <TableCell
-                        colSpan={position.titleCell.id === 0 ? position.fields.length + 3 : 3}
+                        colSpan={
+                          position.titleCell.id === 0 ?
+                            this.mainTableData.find(pos => pos.titleCell.key === 'TotalAmount')
+                              .fields.length + 3
+                            :
+                            3
+                        }
                         className={classnames(
                           classes.tableHeadCell,
                           classes.tableBodyCell,

@@ -72,6 +72,7 @@ export interface SummaryData {
 export interface ChartData {
   labels?: Array<string>
   datasets?: Array<{
+    type?: string
     label?: string
     data: Array<number | string>
     backgroundColor: Array<string> | string
