@@ -79,7 +79,7 @@ class CardInfo extends React.PureComponent<Props, State> {
     this.activePositionChartData = {};
   }
 
-  showPositionInfo(index: number) {
+  showPositionInfo(index: number): void {
     const { data } = this.props;
 
     // @ts-ignore
@@ -102,7 +102,7 @@ class CardInfo extends React.PureComponent<Props, State> {
     this.setState({activePosition: index});
   }
 
-  showPositionInfoByName(positionName: string) {
+  showPositionInfoByName(positionName: string): void {
     const { data } = this.props;
 
     this.showPositionInfo(data.rows.findIndex(row => row.fields[0].value === positionName))
@@ -229,7 +229,7 @@ class CardInfo extends React.PureComponent<Props, State> {
     );
   }
 
-  renderTotalsInfo(totals?: Array<TotalCellValue>) {
+  renderTotalsInfo(totals?: Array<TotalCellValue>): React.ReactNode {
     const { data, classes } = this.props;
 
     const totalsInfo = totals ? totals : data.totals;
@@ -312,8 +312,6 @@ class CardInfo extends React.PureComponent<Props, State> {
 
   render(): React.ReactNode {
     const { activePosition } = this.state;
-
-    console.log(this.props.data);
 
     return (
       <Grid

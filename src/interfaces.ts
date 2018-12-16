@@ -69,19 +69,35 @@ export interface SummaryData {
   viewSettings?: ViewSettings
 }
 
-interface DataType {
-  fieldsInfo: Array<FieldInfo>
-  periodInfo: PeriodInfo
-  rows: Array<CardRow> | Array<SummaryRow>
-  totals: Array<TotalCellValue>
-  viewSettings: ViewSettings
-}
-
 export interface ChartData {
   labels?: Array<string>
   datasets?: Array<{
-    data: Array<number>
-    backgroundColor: Array<string>
-    hoverBackgroundColor: Array<string>
+    label?: string
+    data: Array<number | string>
+    backgroundColor: Array<string> | string
+    hoverBackgroundColor: Array<string> | string
   }>
+}
+
+interface AppInfo {
+  id: number
+  name: string
+  values: Array<string | number>
+}
+
+export interface TransactionsTableData {
+  titleCell: FieldInfo
+  extData: Array<CellValue>
+  hostData: Array<CellValue>
+  oldData: Array<CellValue>
+  fields: Array<CellValue>
+}
+
+export interface AppData {
+  name: string
+  color: string
+  amounts: AppInfo
+  transactions: AppInfo
+  tips: AppInfo
+  fees: AppInfo
 }

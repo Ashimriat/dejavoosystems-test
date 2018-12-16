@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import classnames from 'classnames';
 
 import Chart from './Chart';
-import { SummaryData, TotalCellValue, ChartData} from '../interfaces';
+import { SummaryData, AppData, TransactionsTableData, ChartData} from '../interfaces';
 
 
 interface Props extends WithStyles<typeof styles> {
@@ -62,8 +62,8 @@ const styles = createStyles({
 });
 
 class SummaryInfo extends React.PureComponent<Props, State> {
-  mainTableData: any
-  appsTableData: any
+  mainTableData: Array<TransactionsTableData>
+  appsTableData: Array<AppData>
   constructor(props: Props) {
     super(props);
 
@@ -75,7 +75,7 @@ class SummaryInfo extends React.PureComponent<Props, State> {
     this.appsTableData = this.structureAppsTableData();
   }
 
-  structureMainTableData() {
+  structureMainTableData(): Array<TransactionsTableData> {
     const { data } = this.props;
 
     let rows = [...data.rows];
@@ -102,7 +102,7 @@ class SummaryInfo extends React.PureComponent<Props, State> {
     return [dateRow, ...firstPart, ...secondPart];
   }
 
-  structureAppsTableData() {
+  structureAppsTableData(): Array<AppData> {
     const { data } = this.props;
 
     const subRows = data.rows.map(row => row.subRows);
@@ -174,10 +174,12 @@ class SummaryInfo extends React.PureComponent<Props, State> {
       })
     }
 
+
+    // @ts-ignore
     return chartInfo;
   }
 
-  toggleAppsInfo() {
+  toggleAppsInfo(): void {
     this.setState(prevState => {
       return {
         showAppsInfo: !prevState.showAppsInfo
@@ -249,7 +251,7 @@ class SummaryInfo extends React.PureComponent<Props, State> {
     })
   }
 
-  renderTotalsInfo(totals?: Array<TotalCellValue>) {
+  renderTotalsInfo(): React.ReactNode {
     const { data, classes } = this.props;
 
     let totalsInfo = data.totals.map(total => {
@@ -266,6 +268,11 @@ class SummaryInfo extends React.PureComponent<Props, State> {
         alignItems={'center'}
         spacing={16}
       >
+        <Grid item>
+          <Typography className={classes.title}>
+            {'Transactions summary'}
+          </Typography>
+        </Grid>
         {
           totalsInfo.map((infoPoint, index) => {
             return (
