@@ -1,8 +1,5 @@
 # dejavoosystems-test
 
 1. npm install
-2.
---Development--
-npm run build:dev
---Production--
-npm run build:prod
+2.1. Development: npm run build:dev
+2.2. Production: npm run build:prod
