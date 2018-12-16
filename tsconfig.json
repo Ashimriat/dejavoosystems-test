@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "es6",
+    "jsx": "react",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "baseUrl": "/",
+    "lib": ["es6", "dom"],
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "noImplicitReturns": true,
+    "strict": true,
+    "checkJs": false,
+    "strictNullChecks": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
